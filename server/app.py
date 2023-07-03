@@ -19,15 +19,52 @@ def home():
 
 @app.route('/animal/<int:id>')
 def animal_by_id(id):
-    return ''
+    animal =  Animal.query.filter(Animal.id == id).first()
+    
+    response_body = f'''
+    <ul>ID: {animal.id}</ul>    
+    <ul>Name: {animal.name}</ul>
+    <ul>Species: {animal.species}</ul>
+    <ul>Zookeeper: {animal.zookeeper_id}</ul>
+    <ul>Enclosure: {animal.enclosure_id}</ul>
+    '''
 
+    response = make_response(response_body, 200)
+
+    return response
 @app.route('/zookeeper/<int:id>')
 def zookeeper_by_id(id):
-    return ''
+    zookeeper = Zookeeper.query.filter(Zookeeper.id == id).first()
+    
+    animals_html = ''
+    for animal in zookeeper.animals:
+        animals_html += f'<ul>Animal: {animal.name}</ul>'
+    
+    response_body = f'''
+        <ul>ID: {zookeeper.id}</ul>    
+        <ul>Name: {zookeeper.name}</ul>
+        <ul>Birthday: {zookeeper.birthday}</ul>
+        {animals_html}
+    '''
+
+    response = make_response(response_body, 200)
+    return response
+
 
 @app.route('/enclosure/<int:id>')
 def enclosure_by_id(id):
-    return ''
+    enclosure = Enclosure.query.filter(Enclosure.id == id).first()
+    enclosure_html = ''
+    for animal in enclosure.animals:
+        enclosure_html += f'<ul>Animal: {animal.name}</ul>'
+    response_body = f'''
+        <ul>ID: {enclosure.id}</ul>    
+        <ul>Environment: {enclosure.environment}</ul>
+        <ul>Open to Visitors: {enclosure.open_to_visitors}</ul>
+        {enclosure_html}
+    '''
+    response = make_response(response_body, 200)
+    return response
 
 
 if __name__ == '__main__':
